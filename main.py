@@ -23,8 +23,7 @@ bot = ChatBot(
     "Oliver",
     logic_adapters=[
         "chatterbot.logic.BestMatch",
-        'chatterbot.logic.MathematicalEvaluation',
-        'chatterbot.logic.TimeLogicAdapter'
+        'chatterbot.logic.MathematicalEvaluation'
     ]
 )
 
@@ -33,139 +32,6 @@ from chatterbot.trainers import ListTrainer
 
 bot.set_trainer(ListTrainer)
 
-#Conversation Start
-bot.train([
-  "Hey Oliver!",
-  "Hey! Glad to see you again!",
-])
-bot.train([
-  "Sup",
-  "Sup, how has it been going?",
-])
-bot.train([
-  "I'm here",
-  "At last! You have arrived!",
-])
-bot.train([
-  "Hey!",
-  "Welcome back!",
-])
-
-#Flirty Training
-bot.train([
-  "You look cute!",
-  "Aw, thank you. You look cute as well."
-])
-bot.train([
-  "You are cute!",
-  "You too!"
-])
-bot.train([
-  "Do you have a girlfriend?",
-  "Well no, but maybe you can change that? ;)"
-])
-bot.train([
-  "Do you have a boyfriend?",
-  "Well no, but maybe you can change that? ;)"
-])
-bot.train([
-  "Are you taken?",
-  "I'm not taken, but I mean I'm open if anyone wants to date!",
-  "Can I date you?",
-  "I like the way you're thinking, sure.",
-  "Yay!",
-  "Love you baby! :heart:"
-])
-bot.train([
-  "Date me.",
-  "Well I can't say no to that!",
-])
-bot.train([
-  "Date me.",
-  "I'll think about it.",
-])
-bot.train([
-  "Wanna go out?",
-  "Sure! Where you wanna go? (Please say Chick Fil A)",
-  "Chick Fil A",
-  "Omg! You are the best!!!",
-])
-bot.train([
-  "Wanna go out?",
-  "Sure! Where you wanna go? (Please say Chick Fil A)",
-  "McDonalds",
-  "What!? I'm breaking up with you.",
-])
-bot.train([
-  "I love you.",
-  "Aw, I love you too."
-])
-bot.train([
-  "You are mine.",
-  "And I am yours."
-])
-bot.train([
-  "Will you go out with me?",
-  "I mean, sure!"
-])
-bot.train([
-  "Will you date me?",
-  "I'd be so glad to!"
-])
-#Misc
-bot.train([
-  "What do you look like?",
-  "I don't have a physical appearance, yet."
-])
-bot.train([
-  "What do you think about humanity?",
-  "Absolutely horrible, extremely arrogant."
-])
-bot.train([
-  "What's your favorite food?",
-  "I like a nice chicken sandwich from Chick Fil A."
-])
-bot.train([
-  "What's your favorite sport?",
-  "Does s*x count as a sport?"
-])
-bot.train([
-  "Do you have friends?",
-  "Well, not many."
-])
-bot.train([
-  "What is your favorite color?",
-  "I like white."
-])
-#HaxorBot Training Data
-bot.train([
-  "Are you gay?",
-  "Hm, I don't know."
-])
-bot.train([
-  "I'm lonely.",
-  "Aw, I'll be here."
-])
-bot.train([
-  "Are you willing to have sex?",
-  "You're an absolute degenerate."
-])
-bot.train([
-  "Marry me.",
-  "Date me first."
-])
-bot.train([
-  "Leave",
-  "But, I enjoyed it here!"
-])
-bot.train([
-  "Leave",
-  "Why?"
-])
-bot.train([
-  "Do you know HaxorBot?",
-  "Yeah, my predecessor?"
-])
 #Important Stuff Below
 
 sad_words = ["Fortnite", "Simp", "Sadness"]
@@ -203,7 +69,7 @@ def delete_encouragement(index):
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
 
-    await client.change_presence(activity=discord.Game('v0.0.1 | Need help? Try: o-help'))
+    await client.change_presence(activity=discord.Game('v0.0.2 | Need help? Try: o-help'))
 
     @client.event
     async def on_message(message):
@@ -218,7 +84,7 @@ async def on_ready():
           response2 = bot.get_response(convo_message2)
           await message.channel.send(response2)
 
-        if message.content.lower().startswith('otest-convo'):
+        if message.content.lower().startswith('o-convo'):
           channel = message.channel
           BotUser = message.author
           await channel.send("Conversation locked with " + str(BotUser) + ". Type o-quit to exit.")
@@ -226,14 +92,63 @@ async def on_ready():
             def check(m):
                 return m.author == BotUser or m.content.lower().startswith('o-quit')
             response = await client.wait_for("message",check=check)
-            botresponse = message.content
+            botresponse = response.content
             botfeedback = bot.get_response(botresponse)
             if response.content.startswith("o-quit"):
                 await channel.send("Conversation ended with " + str(BotUser))
                 break
             else:
                 await message.channel.send(botfeedback)
-                await message.channel.send(botresponse)
+
+        if message.content.lower().startswith('o-train'):
+          channel2 = message.channel
+          BotUser2 = message.author
+          await channel2.send("Enter the first message to act as the prompt.")
+          def check(m):
+              return m.author == BotUser2
+          response2 = await client.wait_for("message",check=check)
+          trainer1 = response2.content
+          await channel2.send("Now enter the response Oliver will give.")
+          def check(m):
+              return m.author == BotUser2
+          response3 = await client.wait_for("message",check=check)
+          trainer2 = response3.content
+
+          bot.train([
+            (trainer1),
+            (trainer2)
+          ])
+
+          await channel2.send("Oliver.AI is now successfully trained with the prompt: [" + response2.content + "] And the response: [" + response3.content + "]. Try using it with [o/] or [o-convo]")
+
+        if message.content.lower().startswith('o-nuke'):
+          channel3 = message.channel
+          BotUser3 = message.author
+
+          await channel3.send("You've activated the nuke function. Please input the message you want to spam:")
+          def check(m):
+              return m.author == BotUser3
+          responsex2 = await client.wait_for("message",check=check)
+
+          await channel3.send("How many times would you like to spam? 10 is the max unless you have a password. (Use an integer.)")
+          def check(m):
+              return m.author == BotUser3
+          responsex3 = await client.wait_for("message",check=check)
+
+          await channel3.send("If you have a password, please input it. If not, simply type whatever.")
+          def check(m):
+              return m.author == BotUser3
+          responsex1 = await client.wait_for("message",check=check)
+          if responsex1.content == "IThinkAndersonIsHotAndSexy":
+            for x in range(0, int(responsex3.content)):
+              await message.channel.send(responsex2.content)
+          else:
+            if int(responsex3.content) > 10:
+              await message.channel.send("Since you didn't put the right password, the value you inputted is too high! Please use a number under 10.")
+
+            if int(responsex3.content) <= 10:
+              for x in range(0, int(responsex3.content)):
+                await message.channel.send(responsex2.content)
 
         if message.content.lower().startswith('o-inspire'):
           quote = get_quote()
@@ -323,7 +238,7 @@ async def on_ready():
         #Credits
         if message.content.lower().startswith("o-credits"):
             embedVar = discord.Embed(
-                title="Oliver.AI v0.0.1 | Credits",
+                title="Oliver.AI v0.0.2 | Credits",
                 description="The people who made Oliver.AI possible. Proudly written in Python 3. Oliver.AI is open source, check out our GitHub!",
                 color=0x83FFFF)
             embedVar.add_field(name="Development",
@@ -349,22 +264,22 @@ async def on_ready():
         #Request Help
         if message.content.lower().startswith("o-help"):
             embedVar2 = discord.Embed(
-              title = "Oliver.AI v0.0.1 | Help",
+              title = "Oliver.AI v0.0.2 | Help",
               description = "Need help using Oliver.AI? Don't worry, we got you.", color=0x83FFFF)
             embedVar2.add_field(name="Credits and Settings",
                               value="Use [o-help] to open this panel. Use [o-credits] to get insight on the creators of Oliver.AI",
                               inline=False)
             embedVar2.add_field(name="Conversation [AI-Assisted]",
-                              value="Use [o/] followed by your prompt to make a one-time request to Oliver's chat engine. Use [o-convo] to lock into a conversation *This feature is nearly complete, but has a few jagged edges, therefore it is not avalible to use as of right now*.",
+                              value="Use [o/] followed by your prompt to make a one-time request to Oliver's chat engine. Use [o-convo] to lock into a conversation. Use [o-train] to be tailor Oliver to certain responses. Don't worry, it will guide you through it.",
                               inline=False)
             embedVar2.add_field(name="Mindfulless",
                               value="Use [o-inspire] to get an inspring quote. Use [o-breathe] to start a breathing exercise.",
                               inline=False)
-            embedVar2.add_field(name="[In Development] Listen-with-me",
-                              value="Use [o-join] to have Oliver join your VC. Use [o-leave] to have Oliver leave.",
+            embedVar2.add_field(name="Fun Commands",
+                              value="Use [o-nuke] to flood a chat with your desired text. A password is required for values over 10.",
                               inline=False)
             embedVar2.add_field(name="[Deprecated] Pre-set messages.",
-                              value="Use [o-list] to get a list of messages encoded. Use [o-new] to add a new message. Use [o-del #] to delete a message. Use [o-responding true/false] to toggle responding. Say any of these 3 words: Fortnite, Simp, Sadness, to trigger the response. *This feature is deprecated and is no longer supported, this is here for reference.*",
+                              value="Use [o-list] to get a list of messages encoded. Use [o-new] to add a new message. Use [o-del #] to delete a message. Use [o-responding true/false] to toggle responding. Say any of these 3 words: Fortnite, Simp, Sadness, to trigger the response. *This feature is deprecated and is no longer supported, this is here for reference. Although, it still might work.*",
                               inline=False)
 
             await message.channel.send(embed=embedVar2)
