@@ -10,6 +10,8 @@ discord = "^1.0.1"
 flask = "^1.1.2"
 replit = "^2.0.0"
 chatterbot-voice = "^0.1.5"
+pymongo = "^3.11.4"
+dnspython3 = "^1.15.0"
 
 [tool.poetry.dev-dependencies]
 
