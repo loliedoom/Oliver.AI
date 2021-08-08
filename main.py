@@ -19,7 +19,7 @@ bot = ChatBot(
     logic_adapters=[
         'chatterbot.logic.BestMatch'
     ],
-    database_uri='mongodb+srv://Loliedoom:KllGR6nKkv9sUsPC@olivercluster.zgijd.mongodb.net/OliverCluster?retryWrites=true&w=majority'
+    database_uri=(os.getenv('MONGODB'))
 )
 
 from chatterbot.trainers import ChatterBotCorpusTrainer
@@ -34,7 +34,7 @@ bot.train(
 
 #Global Variables
 
-Version = "v0.0.4 Exodus"
+Version = "v0.0.5 Exodus"
 
 def get_quote():
   response = requests.get("https://zenquotes.io/api/random")
@@ -78,8 +78,8 @@ async def on_ready():
           if randomvalue == (2):
             await message.channel.send(ThinkingResponse2)
 
-          response = bot.get_response(convo_message2)
-          await message.channel.send(response) 
+          content = bot.get_response(convo_message2)
+          await message.channel.send(str(content))
 
         if message.content.lower().startswith('o-convo'):
           await channel.send("Conversation locked with " + str(BotUser) + ". Type o-quit to exit.")
@@ -107,7 +107,7 @@ async def on_ready():
             data={
               'text': str(response.content),
             },
-            headers={'api-key': 'f07cc451-41d9-4cd4-9ce7-630b38d2fa7c'}
+            headers={'api-key': (os.getenv('APIKEY'))}
           )
           imagineoutput = str(r.json())
           imagineoutput2 = (re.search("(?P<url>https?://[^\s]+)", imagineoutput).group("url"))
@@ -123,7 +123,7 @@ async def on_ready():
             data={
               'text': str(imagineprompt),
             },
-            headers={'api-key': 'f07cc451-41d9-4cd4-9ce7-630b38d2fa7c'}
+            headers={'api-key': (os.getenv('APIKEY'))}
           )
           imagineoutput = str(r.json())
           imagineoutput2 = (re.search("(?P<url>https?://[^\s]+)", imagineoutput).group("url"))
@@ -131,6 +131,10 @@ async def on_ready():
           await channel.send("Here's your image! " + str(BotUser) + " | " + str(imagineoutput3))
 
         if message.content.lower().startswith('o-train'):
+
+          await channel.send("This version of Oliver.AI uses a public non-trainable database. You are unable to use this command on this version.")
+
+          return  
 
           await channel.send("Enter the first message to act as a prompt for Oliver to listen for.")
           def check(m):
@@ -237,9 +241,6 @@ async def on_ready():
             embedc.add_field(name="Development",
                               value="Anderson (Loliedoom#5314)",
                               inline=False)
-            embedc.add_field(name="Inspiration",
-                              value="My Friends",
-                              inline=False)
             embedc.add_field(name="APIs and Libraries Used",
                               value="Chatterbot, Discord.py, ZenQuotes.io, DeepAI Text To Image by Scott Ellison Reed",
                               inline=False)
@@ -263,9 +264,6 @@ async def on_ready():
             embedh.add_field(name="Conversation [AI-Assisted]",
                               value="Use [o/] followed by your prompt to make a one-time request to Oliver's chat engine. Use [o-convo] to lock into a conversation.",
                               inline=False)
-            embedh.add_field(name="Emotional Support [AI-Assisted]",
-                              value="Use [o-support] to switch to Oliver's emotional support database. This command works similarily to [o-convo], but doesn't use the general response engine.",
-                              inline=False)
             embedh.add_field(name="Imagine [AI-Assisted]",
                               value="Use [o-imagine] to generate an image out of text. You can also do [oimagine/] following by the prompt to make a request in one line. For information on the API used, use [o-credits].",
                               inline=False)
@@ -273,7 +271,7 @@ async def on_ready():
                               value="Use [o-inspire] to get an inspring quote. Use [o-breathe] to start a breathing exercise.",
                               inline=False)
             embedh.add_field(name="Fun Commands",
-                              value="Use [o-nuke] to flood a chat with your desired text. A password is required for values over 5.",
+                              value="Use [o-nuke] to flood a chat with your desired text. Administrator permissions are required for values over 5.",
                               inline=False)
             embedh.add_field(name="Utility Commands",
                               value="Use [o-debug] to get details such as latency, guild name, author name, and version number. ",
